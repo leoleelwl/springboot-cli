@@ -5,12 +5,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 
-//@TableName("t_user_config")
+
 
 /**
  * 用户界面配置类
  */
 @Data
+@TableName("t_user_config")
 public class UserConfig {
 
     public static final String DEFAULT_THEME = "dark";
