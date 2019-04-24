@@ -1,0 +1,21 @@
+
+spring:
+  profiles:
+    active: dev
+
+server:
+  port: 8088
+
+#mybatis plus
+mybatis-plus:
+# 扫描 mapper.xml
+  #别名 用逗号隔开
+  #type-aliases-package:
+  configuration:
+    cache-enabled: true
+    jdbc-type-for-null: null
+    global-config:
+        # 关闭 mybatis-plus的 banner
+      banner: false
+  mapper-locations: classpath:/mapper/*Mapper.xml
+
