@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@Service("JobLogService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class JobLogServiceImpl extends ServiceImpl<JobLogMapper, JobLog> implements JobLogService {
 

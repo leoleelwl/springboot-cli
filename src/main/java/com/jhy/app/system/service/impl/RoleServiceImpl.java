@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 @Slf4j
-@Service("roleService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
 

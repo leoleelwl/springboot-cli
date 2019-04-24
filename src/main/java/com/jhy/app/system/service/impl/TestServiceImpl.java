@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Service("testService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class TestServiceImpl extends ServiceImpl<TestMapper, Test> implements TestService {
 

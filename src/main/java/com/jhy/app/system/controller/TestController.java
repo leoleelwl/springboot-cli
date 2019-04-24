@@ -52,7 +52,7 @@ public class TestController extends BaseController {
             Test test = new Test();
             test.setField1("字段1");
             test.setField2(i + 1);
-            test.setField3("mrbird" + i + "@gmail.com");
+            test.setField3("jihy" + i + "@gmail.com");
             list.add(test);
         });
         // 构建模板

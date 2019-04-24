@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Properties;
 
 @Configuration
-@MapperScan("com.jhy.app.mapper")
+@MapperScan(value = {"com.jhy.app.*.dao"})
 public class MybatisplusConfig {
 
     @Bean

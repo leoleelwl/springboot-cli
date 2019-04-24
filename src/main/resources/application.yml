@@ -11,11 +11,13 @@ mybatis-plus:
 # 扫描 mapper.xml
   #别名 用逗号隔开
   #type-aliases-package:
+  type-aliases-package: com.jhy.app.system.domain,com.jhy.app.job.domain
+  mapper-locations: classpath:mapper/*/*.xml
   configuration:
     cache-enabled: true
     jdbc-type-for-null: null
-    global-config:
-        # 关闭 mybatis-plus的 banner
-      banner: false
-  mapper-locations: classpath:/mapper/*Mapper.xml
+  global-config:
+      # 关闭 mybatis-plus的 banner
+    banner: false
+
 

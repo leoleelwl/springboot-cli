@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 @Slf4j
-@Service("logService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class LogServiceImpl extends ServiceImpl<LogMapper, SysLog> implements LogService {
 

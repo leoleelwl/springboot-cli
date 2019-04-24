@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 @Slf4j
-@Service("JobService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobService {
 

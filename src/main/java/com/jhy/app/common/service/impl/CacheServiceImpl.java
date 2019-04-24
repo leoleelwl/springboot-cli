@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service("cacheService")
+@Service("cacheServiceImpl")
 public class CacheServiceImpl implements CacheService {
 
     @Autowired

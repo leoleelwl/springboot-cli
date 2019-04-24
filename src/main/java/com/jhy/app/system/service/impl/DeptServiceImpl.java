@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Slf4j
-@Service("deptService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements DeptService {
 

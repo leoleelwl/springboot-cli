@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@Service("dictService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements DictService {
 
