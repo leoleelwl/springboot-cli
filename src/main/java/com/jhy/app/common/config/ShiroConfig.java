@@ -1,6 +1,8 @@
 package com.jhy.app.common.config;
 
+import com.jhy.app.common.constant.AppConstant;
 import com.jhy.app.common.utils.PasswordUtil;
+import com.jhy.app.shiro.JWTFilter;
 import com.jhy.app.shiro.ShiroRealm;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
@@ -28,44 +30,26 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
+
     @Bean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean() {
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(@Qualifier("securityManager") SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
-        //Shiro的核心安全接口,这个属性是必须的
+        // 设置 securityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager());
-        /*定义shiro过滤链  Map结构
-         * Map中key(xml中是指value值)的第一个'/'代表的路径是相对于HttpServletRequest.getContextPath()的值来的
-         * anon：它对应的过滤器里面是空的,什么都没做,这里.do和.jsp后面的*表示参数,比方说login.jsp?main这种
-         * authc：该过滤器下的页面必须验证后才能访问,它是Shiro内置的一个拦截器org.apache.shiro.web.filter.authc.FormAuthenticationFilter
-         */
-        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-         /* 过滤链定义，从上向下顺序执行，一般将 / ** 放在最为下边:这是一个坑呢，一不小心代码就不好使了;
-          authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问 */
-        //filterChainDefinitionMap.put("/", "anon");
-        shiroFilterFactoryBean.setLoginUrl("/login");
-        shiroFilterFactoryBean.setSuccessUrl("/index");
-        filterChainDefinitionMap.put("/static/**", "anon");
-        filterChainDefinitionMap.put("/login/auth", "anon");
-        filterChainDefinitionMap.put("/login/logout", "anon");
-        filterChainDefinitionMap.put("/error", "anon");
-        filterChainDefinitionMap.put("/**", "authc");
+        // 在 Shiro过滤器链上加入 JWTFillter
+        LinkedHashMap<String, Filter> filters = new LinkedHashMap<>();
+        filters.put(AppConstant.JWT_FILTER_NAME, new JWTFilter());
+        shiroFilterFactoryBean.setFilters(filters);
+        LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+        // 所有请求都要经过 jwt过滤器
+        filterChainDefinitionMap.put("/**", AppConstant.JWT_FILTER_NAME);
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
-        // TODO 此处可以添加 jwt 支持
-//      // 在 Shiro过滤器链上加入 JWTFilter
-//      LinkedHashMap<String, Filter> filters = new LinkedHashMap<>();
-//      filters.put("jwt", new JWTFilter());
-//      shiroFilterFactoryBean.setFilters(filters);
-//      LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-//      // 所有请求都要经过 jwt过滤器
-//      filterChainDefinitionMap.put("/**", "jwt");
-//      shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
 
-    @Bean
+    @Bean(name="securityManager")
     public SecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        // 配置 SecurityManager，并注入 shiroRealm
         securityManager.setRealm(shiroRealm());
         return securityManager;
     }
@@ -75,60 +59,10 @@ public class ShiroConfig {
         return new ShiroRealm();
     }
 
-
     /**
-     * 密码匹配凭证管理器
-     * @return
-     */
-    @Bean(name = "hashedCredentialsMatcher")
-    public HashedCredentialsMatcher hashedCredentialsMatcher() {
-        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
-        hashedCredentialsMatcher.setHashAlgorithmName(PasswordUtil.ALGORITHM_NAME);
-        hashedCredentialsMatcher.setHashIterations(PasswordUtil.HASH_ITERATIONS);// 散列的次数，比如散列两次，相当于
-        //storedCredentialsHexEncoded默认是true，此时用的是密码加密用的是Hex编码；false时用Base64编码
-        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
-        return hashedCredentialsMatcher;
-    }
-
-    /**
-     * 记住我管理器 cookie管理对象;
-     *
-     * @return
-     */
-    @Bean(name = "cookieRememberMeManager")
-    public CookieRememberMeManager rememberMeManager() {
-        CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
-        cookieRememberMeManager.setCookie(rememberMeCookie());
-        return cookieRememberMeManager;
-    }
-
-    /**
-     * cookie对象;
-     *
-     * @return
-     */
-    public SimpleCookie rememberMeCookie() {
-        // 这个参数是cookie的名称，对应前端的checkbox 的name = rememberMe
-        SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
-        // <!-- 记住我cookie生效时间30天（259200） ,单位秒;-->
-        simpleCookie.setMaxAge(259200);
-        return simpleCookie;
-    }
-
-    /**
-     * Shiro生命周期处理器
+     * 开启Shiro的注解(@RequiresRoles,@RequiresPermissions)
      */
     @Bean
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
-        return new LifecycleBeanPostProcessor();
-    }
-
-    /**
-     * 开启Shiro的注解(如@RequiresRoles,@RequiresPermissions),需借助SpringAOP扫描使用Shiro注解的类,并在必要时进行安全逻辑验证
-     * 配置以下两个bean(DefaultAdvisorAutoProxyCreator(可选)和AuthorizationAttributeSourceAdvisor)即可实现此功能
-     */
-    @Bean
-    @DependsOn({"lifecycleBeanPostProcessor"})
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager());

@@ -15,6 +15,8 @@ public class AppConstant {
     // 存储在线用户的 zset前缀
     public static final String ACTIVE_USERS_ZSET_PREFIX = "app.user.active";
 
+    public static final String JWT_FILTER_NAME = "JWT";
+
     // 排序规则： descend 降序
     public static final String ORDER_DESC = "descend";
     // 排序规则： ascend 升序

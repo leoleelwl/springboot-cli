@@ -1,9 +1,12 @@
 package com.jhy.app.shiro;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.jhy.app.common.properties.AppProperties;
 import com.jhy.app.common.utils.SpringContextUtil;
@@ -33,7 +36,13 @@ public class JWTUtil {
             verifier.verify(token);
             log.info("token is valid");
             return true;
-        } catch (Exception e) {
+        }catch (TokenExpiredException e) {
+            log.info("token is invalid{}", e.getMessage());
+            return false;
+        }catch (InvalidClaimException e){
+            log.info("token has expired{}", e.getMessage());
+            return false;
+        }catch (Exception e){
             log.info("token is invalid{}", e.getMessage());
             return false;
         }
@@ -74,5 +83,18 @@ public class JWTUtil {
             log.error("error：{}", e);
             return null;
         }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Algorithm algorithm = Algorithm.HMAC256("sss");
+        String sign = JWT.create()
+                .withClaim("username", "jhy")
+                .withExpiresAt(new Date(System.currentTimeMillis() + 1000L))
+                .sign(algorithm);
+        System.out.println(sign);
+        Thread.sleep(2000);
+        String decoded = JWT.decode(sign).getClaim("username").asString();
+        System.out.println(decoded);
+        JWT.require(algorithm).withClaim("username", "jhy").build().verify(sign);
     }
 }

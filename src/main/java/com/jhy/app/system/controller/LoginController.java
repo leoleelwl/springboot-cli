@@ -32,6 +32,9 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.baomidou.mybatisplus.core.toolkit.StringPool.DOT;
+import static com.jhy.app.common.constant.AppConstant.ACTIVE_USERS_ZSET_PREFIX;
+
 @Validated
 @RestController
 public class LoginController {
@@ -111,7 +114,7 @@ public class LoginController {
     @GetMapping("online")
     public ResponseBean<List<ActiveUser>> userOnline(String username) throws Exception {
         String now = DateUtil.formatFullTime(LocalDateTime.now());
-        Set<String> userOnlineStringSet = redisService.zrangeByScore(AppConstant.ACTIVE_USERS_ZSET_PREFIX, now, "+inf");
+        Set<String> userOnlineStringSet = redisService.zrangeByScore(ACTIVE_USERS_ZSET_PREFIX, now, "+inf");
         List<ActiveUser> activeUsers = new ArrayList<>();
         for (String userOnlineString : userOnlineStringSet) {
             ActiveUser activeUser = mapper.readValue(userOnlineString, ActiveUser.class);
@@ -130,7 +133,7 @@ public class LoginController {
     @RequiresPermissions("user:kickout")
     public void kickout(@NotBlank(message = "{required}") @PathVariable String id) throws Exception {
         String now = DateUtil.formatFullTime(LocalDateTime.now());
-        Set<String> userOnlineStringSet = redisService.zrangeByScore(AppConstant.ACTIVE_USERS_ZSET_PREFIX, now, "+inf");
+        Set<String> userOnlineStringSet = redisService.zrangeByScore(ACTIVE_USERS_ZSET_PREFIX, now, "+inf");
         ActiveUser kickoutUser = null;
         String kickoutUserString = "";
         for (String userOnlineString : userOnlineStringSet) {
@@ -142,7 +145,7 @@ public class LoginController {
         }
         if (kickoutUser != null && StringUtils.isNotBlank(kickoutUserString)) {
             // 删除 zset中的记录
-            redisService.zrem(AppConstant.ACTIVE_USERS_ZSET_PREFIX, kickoutUserString);
+            redisService.zrem(ACTIVE_USERS_ZSET_PREFIX, kickoutUserString);
             // 删除对应的 token缓存
             redisService.del(AppConstant.TOKEN_CACHE_PREFIX + kickoutUser.getToken() + "." + kickoutUser.getIp());
         }
@@ -171,9 +174,9 @@ public class LoginController {
         //activeUser.setLoginAddress(AddressUtil.getCityInfo(DbSearcher.BTREE_ALGORITHM, ip));
 
         // zset 存储登录用户，score 为过期时间戳
-        this.redisService.zadd(AppConstant.ACTIVE_USERS_ZSET_PREFIX, Double.valueOf(token.getExipreAt()), mapper.writeValueAsString(activeUser));
+        this.redisService.zadd(ACTIVE_USERS_ZSET_PREFIX, Double.valueOf(token.getExipreAt()), mapper.writeValueAsString(activeUser));
         // redis 中存储这个加密 token，key = 前缀 + 加密 token + .ip
-        this.redisService.set(AppConstant.TOKEN_CACHE_PREFIX + token.getToken() + StringPool.DOT + ip, token.getToken(), properties.getShiro().getJwtTimeOut() * 1000);
+        this.redisService.set(AppConstant.TOKEN_CACHE_PREFIX + token.getToken() + DOT + ip, token.getToken(), properties.getShiro().getJwtTimeOut() * 1000);
 
         return activeUser.getId();
     }

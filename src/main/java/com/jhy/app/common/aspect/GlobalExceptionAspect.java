@@ -70,7 +70,7 @@ public class GlobalExceptionAspect {
         }
         //shiro异常： 登陆失败，如密码错误
         else if (e instanceof IncorrectCredentialsException) {
-            result.setMsg("Login failed. Try xwjie/123456");
+            result.setMsg("Login failed.");
             result.setCode(ResponseBean.FAIL);
         }
         // shiro异常：没有权限
