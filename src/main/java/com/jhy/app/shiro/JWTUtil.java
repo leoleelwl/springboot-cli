@@ -87,14 +87,14 @@ public class JWTUtil {
 
     public static void main(String[] args) throws InterruptedException {
         Algorithm algorithm = Algorithm.HMAC256("sss");
-        String sign = JWT.create()
-                .withClaim("username", "jhy")
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1000L))
-                .sign(algorithm);
+    String sign = JWT.create()
+            .withClaim("username", "jhy")
+            .withExpiresAt(new Date(System.currentTimeMillis() + 1000L))
+            .sign(algorithm);
         System.out.println(sign);
         Thread.sleep(2000);
-        String decoded = JWT.decode(sign).getClaim("username").asString();
+    String decoded = JWT.decode(sign).getClaim("username").asString();
         System.out.println(decoded);
         JWT.require(algorithm).withClaim("username", "jhy").build().verify(sign);
-    }
+}
 }

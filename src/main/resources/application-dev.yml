@@ -49,6 +49,6 @@ app:
         num: 1000
   shiro:
     # 后端免认证接口 url
-    anonUrl: /login,/logout/**,/regist,/user/check/**
+    anonUrl: /auth/login,/auth/logout/**,/auth/regist,/user/check/**
     # token有效期，单位秒
     jwtTimeOut: 3600

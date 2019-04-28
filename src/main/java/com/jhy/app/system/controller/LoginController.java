@@ -54,7 +54,7 @@ public class LoginController {
     @Autowired
     private ObjectMapper mapper;
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     //@Limit(key = "login", period = 60, count = 20, name = "登录接口", prefix = "limit")
     public ResponseBean<?> login(
             @NotBlank(message = "{required}") String username,
@@ -151,12 +151,12 @@ public class LoginController {
         }
     }
 
-    @GetMapping("logout/{id}")
+    @GetMapping("/auth/logout/{id}")
     public void logout(@NotBlank(message = "{required}") @PathVariable String id) throws Exception {
         this.kickout(id);
     }
 
-    @PostMapping("regist")
+    @PostMapping("/auth/regist")
     public void regist(
             @NotBlank(message = "{required}") String username,
             @NotBlank(message = "{required}") String password) throws Exception {

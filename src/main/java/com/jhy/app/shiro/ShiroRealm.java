@@ -35,6 +35,12 @@ public class ShiroRealm extends AuthorizingRealm {
 
 	@Autowired
 	private UserManager userManager;
+
+	@Override
+	public boolean supports(AuthenticationToken token) {
+		return token instanceof JWTToken;
+	}
+
 	/**
 	 * 授权
 	 */
@@ -81,7 +87,7 @@ public class ShiroRealm extends AuthorizingRealm {
 		if(!JWTUtil.verify(jwtToken, username, user.getPassword())){
 			throw new AuthenticationException("token校验不通过");
 		}
-		return new SimpleAuthenticationInfo(token,token,"app_shiro_realm");
+		return new SimpleAuthenticationInfo(jwtToken,jwtToken,"app_shiro_realm");
 	}
 
 }
