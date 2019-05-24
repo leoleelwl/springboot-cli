@@ -49,7 +49,7 @@ public class User implements Serializable {
     @TableId(value = "USER_ID", type = IdType.AUTO)
     private Long userId;
 
-    @Size(min = 4, max = 10, message = "{range}")
+    @Size(min = 3, max = 10, message = "{range}")
     @ExcelField(value = "用户名")
     private String username;
 

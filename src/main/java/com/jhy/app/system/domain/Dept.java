@@ -1,6 +1,7 @@
 package com.jhy.app.system.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.jhy.app.common.converter.TimeConverter;
@@ -31,6 +32,13 @@ public class Dept implements Serializable {
     private String deptName;
 
     private Double orderNum;
+
+    /*图标*/
+    private String icon;
+
+    /*是否组*/
+    @TableField("IS_GROUP")
+    private boolean isGroup;
 
     @ExcelField(value = "创建时间", writeConverter = TimeConverter.class)
     private Date createTime;

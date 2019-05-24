@@ -4,7 +4,7 @@ spring:
     active: dev
 
 server:
-  port: 8088
+  port: 8089
 
 #mybatis plus
 mybatis-plus:

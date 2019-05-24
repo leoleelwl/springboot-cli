@@ -9,6 +9,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.stream.Stream;
 
 @Order
 @Slf4j
@@ -29,6 +30,8 @@ public class StartedUpRunner implements ApplicationRunner {
             log.info("    |_______/       \\______/   \\______| \\______||_______|_______/    |_______/");
 
             log.info("springboot-cli 启动完毕，时间：" + LocalDateTime.now());
+            /*String[] names = context.getBeanDefinitionNames();
+            Stream.of(names).forEach(System.out::println);*/
         }
     }
 }

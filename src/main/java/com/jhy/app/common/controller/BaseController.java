@@ -11,6 +11,8 @@ public class BaseController{
             Map<String, Object> rspData = new HashMap<>();
             rspData.put("rows", pageInfo.getRecords());
             rspData.put("total", pageInfo.getTotal());
+            rspData.put("current", pageInfo.getCurrent());
+            rspData.put("totalPage", pageInfo.getPages());
             return rspData;
         }
 }

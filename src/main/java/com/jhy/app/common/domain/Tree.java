@@ -19,6 +19,8 @@ public class Tree<T> {
 
     private String title;
 
+    private boolean group;
+
     private String value;
 
     private String text;

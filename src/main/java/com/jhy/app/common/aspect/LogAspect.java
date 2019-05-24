@@ -9,6 +9,7 @@ import com.jhy.app.common.annotations.Log;
 import com.jhy.app.common.properties.AppProperties;
 import com.jhy.app.common.utils.HttpContextUtil;
 import com.jhy.app.common.utils.IPUtil;
+import com.jhy.app.shiro.JWTUtil;
 import com.jhy.app.system.dao.LogMapper;
 import com.jhy.app.system.domain.SysLog;
 import lombok.extern.slf4j.Slf4j;
@@ -83,9 +84,8 @@ public class LogAspect {
 			HttpServletRequest request = HttpContextUtil.getHttpServletRequest();
 			// 设置IP地址
 			sysLog.setIp(IPUtil.getIpAddr(request));
-			// 模拟一个用户名
-			// TODO 根据登录用户来设置
-			String  username = (String) SecurityUtils.getSubject().getPrincipal();
+			String  token = (String) SecurityUtils.getSubject().getPrincipal();
+			String  username = JWTUtil.getUsername(token);
 			sysLog.setUsername(username);
 			sysLog.setTime(time);
 			Date date = new Date();

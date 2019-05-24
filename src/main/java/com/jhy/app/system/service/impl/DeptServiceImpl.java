@@ -84,14 +84,16 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         depts.forEach(dept -> {
             Tree<Dept> tree = new Tree<>();
             tree.setId(dept.getDeptId().toString());
-            tree.setKey(tree.getId());
+            tree.setKey(dept.getDeptId().toString());
             tree.setParentId(dept.getParentId().toString());
             tree.setText(dept.getDeptName());
             tree.setCreateTime(dept.getCreateTime());
             tree.setModifyTime(dept.getModifyTime());
             tree.setOrder(dept.getOrderNum());
-            tree.setTitle(tree.getText());
+            tree.setTitle(dept.getDeptName());
             tree.setValue(tree.getId());
+            tree.setIcon(dept.getIcon());
+            tree.setGroup(dept.isGroup());
             trees.add(tree);
         });
     }

@@ -1,5 +1,6 @@
 package com.jhy.app.system.manager;
 
+import com.google.common.collect.Lists;
 import com.jhy.app.common.domain.router.RouterMeta;
 import com.jhy.app.common.domain.router.VueRouter;
 import com.jhy.app.common.service.CacheService;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -94,7 +96,7 @@ public class UserManager {
             route.setPath(menu.getPath());
             route.setComponent(menu.getComponent());
             route.setName(menu.getMenuName());
-            route.setMeta(new RouterMeta(true, null));
+            route.setMeta(VueRouter.constructMeta(menu));
             routes.add(route);
         });
         return TreeUtil.buildVueRouter(routes);

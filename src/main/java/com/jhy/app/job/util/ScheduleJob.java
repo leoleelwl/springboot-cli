@@ -5,14 +5,18 @@ import com.jhy.app.job.domain.Job;
 import com.jhy.app.job.domain.JobLog;
 import com.jhy.app.job.service.JobLogService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobExecutionContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import static org.apache.commons.beanutils.BeanUtils.copyProperties;
 
 /**
  * 定时任务
@@ -24,21 +28,23 @@ public class ScheduleJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        Job scheduleJob = (Job) context.getMergedJobDataMap().get(Job.JOB_PARAM_KEY);
-
         // 获取spring bean
         JobLogService scheduleJobLogService = SpringContextUtil.getBean(JobLogService.class);
-
-        JobLog jobLog = new JobLog();
-        jobLog.setJobId(scheduleJob.getJobId());
-        jobLog.setBeanName(scheduleJob.getBeanName());
-        jobLog.setMethodName(scheduleJob.getMethodName());
-        jobLog.setParams(scheduleJob.getParams());
-        jobLog.setCreateTime(new Date());
-
-        long startTime = System.currentTimeMillis();
-
+        Job scheduleJob = null;
+        JobLog jobLog =null;
+        long startTime = 0;
         try {
+            Object o = context.getMergedJobDataMap().get(Job.JOB_PARAM_KEY);
+            scheduleJob= new Job();
+            copyProperties(scheduleJob, o);
+            jobLog = new JobLog();
+            jobLog.setJobId(scheduleJob.getJobId());
+            jobLog.setBeanName(scheduleJob.getBeanName());
+            jobLog.setMethodName(scheduleJob.getMethodName());
+            jobLog.setParams(scheduleJob.getParams());
+            jobLog.setCreateTime(new Date());
+
+            startTime = System.currentTimeMillis();
             // 执行任务
             log.info("任务准备执行，任务ID：{}", scheduleJob.getJobId());
             ScheduleRunnable task = new ScheduleRunnable(scheduleJob.getBeanName(), scheduleJob.getMethodName(),

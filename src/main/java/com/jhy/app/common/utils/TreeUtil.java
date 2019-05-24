@@ -5,6 +5,7 @@ import com.jhy.app.common.domain.router.RouterMeta;
 import com.jhy.app.common.domain.router.VueRouter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TreeUtil {
@@ -56,7 +57,10 @@ public class TreeUtil {
         root.setHasParent(false);
         root.setHasChildren(true);
         root.setChildren(topNodes);
-        root.setText("root");
+        root.setText("根节点");
+        root.setIcon("setting");
+        root.setTitle("根节点");
+        root.setKey("0");
         return root;
     }
 
@@ -79,7 +83,12 @@ public class TreeUtil {
         router.setComponent("HomePageView");
         router.setIcon("home");
         router.setChildren(null);
-        router.setMeta(new RouterMeta(false, true));
+        router.setMeta(new RouterMeta()
+                            .setIcon("home")
+                            .setKeepAlive(true)
+                            .setPermission(Arrays.asList(""))
+                            .setTitle("系统主页")
+                            );
         topRoutes.add(router);
 
         routes.forEach(route -> {
@@ -106,7 +115,11 @@ public class TreeUtil {
         router.setName("个人中心");
         router.setComponent("personal/Profile");
         router.setIcon("none");
-        router.setMeta(new RouterMeta(true, false));
+        router.setMeta(new RouterMeta()
+                        .setIcon("none")
+                        .setKeepAlive(true)
+                        .setTitle("个人中心")
+                        .setIsShow(false));
         topRoutes.add(router);
 
         ArrayList<VueRouter<T>> list = new ArrayList<>();
@@ -117,6 +130,9 @@ public class TreeUtil {
         root.setPath("/");
         root.setRedirect("/home");
         root.setChildren(topRoutes);
+        root.setMeta(new RouterMeta()
+                        .setIcon("none")
+                        .setTitle("主页"));
         list.add(root);
 
         root = new VueRouter<>();

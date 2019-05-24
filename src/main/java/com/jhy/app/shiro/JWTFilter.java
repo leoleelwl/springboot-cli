@@ -9,17 +9,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.AntPathMatcher;
+import org.springframework.util.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.stream.Stream;
 
 @Slf4j
 public class JWTFilter extends BasicHttpAuthenticationFilter {
 
+    //认证头的名称
     private static final String TOKEN = "Authorization";
 
     private AntPathMatcher pathMatcher = new AntPathMatcher();
@@ -27,8 +30,8 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws UnauthorizedException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        AppProperties febsProperties = SpringContextUtil.getBean(AppProperties.class);
-        String[] anonUrl = StringUtils.splitByWholeSeparatorPreserveAllTokens(febsProperties.getShiro().getAnonUrl(), StringPool.COMMA);
+        AppProperties appProperties = SpringContextUtil.getBean(AppProperties.class);
+        String[] anonUrl = StringUtils.splitByWholeSeparatorPreserveAllTokens(appProperties.getShiro().getAnonUrl(), StringPool.COMMA);
 
         boolean match = false;
         for (String u : anonUrl) {
@@ -79,5 +82,14 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             return false;
         }
         return super.preHandle(request, response);
+    }
+
+    public static void main(String[] args) {
+        String[] tokens = StringUtils.splitByWholeSeparatorPreserveAllTokens("/auth/login,/auth/logout/**,/auth/regist,/user/check/**",StringPool.COMMA);
+        //Stream.of(tokens).forEach(System.out::println);
+        boolean b = new AntPathMatcher().match("/auth/*", "/auth/login");
+        //return true
+        System.out.println(b);
+        SocketUtils.findAvailableTcpPort(8080);
     }
 }
