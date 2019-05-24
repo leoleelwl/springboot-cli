@@ -1,7 +1,7 @@
 package com.jhy.app.common.exceptions;
 
 /**
- * FEBS 系统内部异常
+ *  系统内部异常
  */
 public class AppException extends Exception {
 
